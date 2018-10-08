@@ -170,6 +170,12 @@ end
 locations = unique(leaf_locations);
 loc_indices = zeros(0,0);
 
+% count the number of samples per location
+for i = 1 : length(locations)
+    nr_samples(i) = sum(ismember(leaf_locations,locations{i}));
+end
+
+
 % truncate the migration covariates to only include "locations"
 for i = 1 : length(locations)
     loc_indices(end+1,1) = find(ismember(all_locations, locations{i}));
@@ -194,6 +200,19 @@ for i = 1 : length(cov_names)
         truncated_m_covariates = rmfield(truncated_m_covariates, cov_names{i});
     end
 end
+
+% add samples from and to
+mat_samples = zeros(length(nr_samples));
+for a = 1 : length(nr_samples);
+    for b = 1 : length(nr_samples);
+        if a~=b
+            mat_samples(a,b) = log(nr_samples(a));
+        end
+    end
+end
+
+truncated_m_covariates.Samples_from = mat_samples;
+truncated_m_covariates.Samples_to = mat_samples';
 
 
 
@@ -576,37 +595,52 @@ for utn = 1 : 5
         fprintf(f, '\t\t</rate>\n');
         fprintf(f, '\t</strictClockBranchRates>\n');
         
-        
-        fprintf(f, '\t<markovJumpsTreeLikelihood id="location.treeLikelihood" useAmbiguities="true" stateTagName="location.states" useUniformization="true" numberOfSimulants="1" saveCompleteHistory="true" logCompleteHistory="true">\n');
+        fprintf(f, '\t<ancestralTreeLikelihood id="location.treeLikelihood" stateTagName="location.states" useUniformization="true" saveCompleteHistory="false" logCompleteHistory="false">\n');
         fprintf(f, '\t\t<attributePatterns idref="location.pattern"/>\n');
         fprintf(f, '\t\t<treeModel idref="treeModel"/>\n');
         fprintf(f, '\t\t<siteModel idref="location.siteModel"/>\n');
         fprintf(f, '\t\t<glmSubstitutionModel idref="location.model"/>\n');
-        fprintf(f, '\t\t<strictClockBranchRates idref="location.branchRates"/>\n');
         fprintf(f, '\t\t<frequencyModel id="location.root.frequencyModel" normalize="true">\n');
         fprintf(f, '\t\t\t<generalDataType idref="location.dataType"/>\n');
         fprintf(f, '\t\t\t<frequencies>\n');
-        fprintf(f, '\t\t\t\t<parameter id="location.root.frequencies" dimension="14"/>\n');
+        fprintf(f, '\t\t\t\t<parameter id="location.root.frequencies" dimension="%d"/>\n', 14);
         fprintf(f, '\t\t\t</frequencies>\n');
         fprintf(f, '\t\t</frequencyModel>\n');
+        fprintf(f, '\t\t<strictClockBranchRates idref="location.branchRates"/>\n');
+        fprintf(f, '\t</ancestralTreeLikelihood>\n');
 
-        fprintf(f, '\t\t<rewards>\n');
-        fprintf(f, '\t\t\t<parameter id="Kailahun_R"			value="1.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0" />\n');
-        fprintf(f, '\t\t\t<parameter id="Kenema_R"			value="0.0 1.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0" />\n');
-        fprintf(f, '\t\t\t<parameter id="Kono_R"				value="0.0 0.0 1.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0" />\n');
-        fprintf(f, '\t\t\t<parameter id="Bombali_R"			value="0.0 0.0 0.0 1.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0" />\n');
-        fprintf(f, '\t\t\t<parameter id="Kambia_R"			value="0.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0" />\n');
-        fprintf(f, '\t\t\t<parameter id="Koinadugu_R"			value="0.0 0.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0" />\n');
-        fprintf(f, '\t\t\t<parameter id="PortLoko_R"			value="0.0 0.0 0.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0" />\n');
-        fprintf(f, '\t\t\t<parameter id="Tonkolili_R"			value="0.0 0.0 0.0 0.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 0.0 0.0 0.0" />\n');
-        fprintf(f, '\t\t\t<parameter id="Bo_R"				value="0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 0.0 0.0" />\n');
-        fprintf(f, '\t\t\t<parameter id="Bonthe_R"			value="0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 0.0" />\n');
-        fprintf(f, '\t\t\t<parameter id="Moyamba_R"			value="0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0" />\n');
-        fprintf(f, '\t\t\t<parameter id="Pujehun_R"			value="0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 1.0 0.0 0.0" />\n');
-        fprintf(f, '\t\t\t<parameter id="WesternRural_R"		value="0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 1.0 0.0" />\n');
-        fprintf(f, '\t\t\t<parameter id="WesternUrban_R"		value="0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 1.0" />\n');
-        fprintf(f, '\t\t</rewards>\n');
-        fprintf(f, '\t</markovJumpsTreeLikelihood>\n');
+        
+        
+%         fprintf(f, '\t<markovJumpsTreeLikelihood id="location.treeLikelihood" useAmbiguities="true" stateTagName="location.states" useUniformization="true" numberOfSimulants="1" saveCompleteHistory="true" logCompleteHistory="true">\n');
+%         fprintf(f, '\t\t<attributePatterns idref="location.pattern"/>\n');
+%         fprintf(f, '\t\t<treeModel idref="treeModel"/>\n');
+%         fprintf(f, '\t\t<siteModel idref="location.siteModel"/>\n');
+%         fprintf(f, '\t\t<glmSubstitutionModel idref="location.model"/>\n');
+%         fprintf(f, '\t\t<strictClockBranchRates idref="location.branchRates"/>\n');
+%         fprintf(f, '\t\t<frequencyModel id="location.root.frequencyModel" normalize="true">\n');
+%         fprintf(f, '\t\t\t<generalDataType idref="location.dataType"/>\n');
+%         fprintf(f, '\t\t\t<frequencies>\n');
+%         fprintf(f, '\t\t\t\t<parameter id="location.root.frequencies" dimension="14"/>\n');
+%         fprintf(f, '\t\t\t</frequencies>\n');
+%         fprintf(f, '\t\t</frequencyModel>\n');
+% 
+%         fprintf(f, '\t\t<rewards>\n');
+%         fprintf(f, '\t\t\t<parameter id="Kailahun_R"			value="1.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0" />\n');
+%         fprintf(f, '\t\t\t<parameter id="Kenema_R"			value="0.0 1.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0" />\n');
+%         fprintf(f, '\t\t\t<parameter id="Kono_R"				value="0.0 0.0 1.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0" />\n');
+%         fprintf(f, '\t\t\t<parameter id="Bombali_R"			value="0.0 0.0 0.0 1.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0" />\n');
+%         fprintf(f, '\t\t\t<parameter id="Kambia_R"			value="0.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0" />\n');
+%         fprintf(f, '\t\t\t<parameter id="Koinadugu_R"			value="0.0 0.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0" />\n');
+%         fprintf(f, '\t\t\t<parameter id="PortLoko_R"			value="0.0 0.0 0.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0" />\n');
+%         fprintf(f, '\t\t\t<parameter id="Tonkolili_R"			value="0.0 0.0 0.0 0.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 0.0 0.0 0.0" />\n');
+%         fprintf(f, '\t\t\t<parameter id="Bo_R"				value="0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 0.0 0.0" />\n');
+%         fprintf(f, '\t\t\t<parameter id="Bonthe_R"			value="0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 0.0" />\n');
+%         fprintf(f, '\t\t\t<parameter id="Moyamba_R"			value="0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0" />\n');
+%         fprintf(f, '\t\t\t<parameter id="Pujehun_R"			value="0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 1.0 0.0 0.0" />\n');
+%         fprintf(f, '\t\t\t<parameter id="WesternRural_R"		value="0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 1.0 0.0" />\n');
+%         fprintf(f, '\t\t\t<parameter id="WesternUrban_R"		value="0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 1.0" />\n');
+%         fprintf(f, '\t\t</rewards>\n');
+%         fprintf(f, '\t</markovJumpsTreeLikelihood>\n');
 
         
         fprintf(f, '\t<sumStatistic id="location.nonZeroRates" elementwise="true">\n');
@@ -824,11 +858,11 @@ for utn = 1 : 5
         fprintf(f, '\n');
         fprintf(f, '\t\t<!-- END Discrete Traits Model                                               -->\n');
         fprintf(f, '\n');
-        fprintf(f, '\t\t<log id="completeJumpHistory" logEvery="500000" fileName="%s.GLM.history.log">\n',flog);
-        fprintf(f, '\t\t\t<completeHistoryLogger>\n');
-        fprintf(f, '\t\t\t\t<markovJumpsTreeLikelihood idref="location.treeLikelihood"/>\n');
-        fprintf(f, '\t\t\t</completeHistoryLogger>\n');
-        fprintf(f, '\t\t</log>\n');
+%         fprintf(f, '\t\t<log id="completeJumpHistory" logEvery="500000" fileName="%s.GLM.history.log">\n',flog);
+%         fprintf(f, '\t\t\t<completeHistoryLogger>\n');
+%         fprintf(f, '\t\t\t\t<markovJumpsTreeLikelihood idref="location.treeLikelihood"/>\n');
+%         fprintf(f, '\t\t\t</completeHistoryLogger>\n');
+%         fprintf(f, '\t\t</log>\n');
         fprintf(f, '\n');
         fprintf(f, '\t\t<!-- write tree log to file                                                  -->\n');
         fprintf(f, '\t\t<logTree id="treeFileLog" logEvery="500000" nexusFormat="true" fileName="%s.trees" sortTranslationTable="true">\n',flog);

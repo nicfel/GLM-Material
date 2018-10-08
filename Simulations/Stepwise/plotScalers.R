@@ -114,7 +114,7 @@ plot(p_mig)
 p_mig_inc1 <- ggplot()+
   geom_point(data=m_red1, aes(x=abs(true), y=inc), size=1)+
   ylab("inclusion probability") + xlab("absolute value of true scaler") + ggtitle("Inclusion of active covariates") + 
-  geom_hline(yintercept = 0.6818, color="black", linetype="dashed") + 
+  geom_hline(yintercept = 0.6383, color="black", linetype="dashed") + 
   theme(legend.position="none")
 plot(p_mig_inc1)
 
@@ -142,7 +142,7 @@ plot(p_Ne)
 p_Ne_inc1 <- ggplot()+
   geom_point(data=Ne_red1, aes(x=abs(true), y=inc), size=1)+
   ylab("inclusion probability") + xlab("absolute value of true scaler") + ggtitle("Inclusion of active covariates") + 
-  geom_hline(yintercept = 0.6818, color="black", linetype="dashed") + 
+  geom_hline(yintercept = 0.6383, color="black", linetype="dashed") + 
   theme(legend.position="none") 
 plot(p_Ne_inc1)
 
@@ -153,16 +153,16 @@ p_Ne_inc2 <- ggplot()+
 plot(p_Ne_inc2)
 
 
-ggsave(plot=p_mig,"../../text/figures/Stepwise_migration.pdf",width=3.5, height=3.5)
+ggsave(plot=p_mig,"../../Figures/Stepwise/Stepwise_migration.pdf",width=3.5, height=3.5)
 
-ggsave(plot=p_mig_inc1,"../../text/figures/Stepwise_mig_inclusion.pdf",width=3.5, height=3.5)
-ggsave(plot=p_mig_inc2,"../../text/figures/Stepwise_mig_exclusion.pdf",width=3.5, height=3.5)
+ggsave(plot=p_mig_inc1,"../../Figures/Stepwise/Stepwise_mig_inclusion.pdf",width=3.5, height=3.5)
+ggsave(plot=p_mig_inc2,"../../Figures/Stepwise/Stepwise_mig_exclusion.pdf",width=3.5, height=3.5)
 
 
-ggsave(plot=p_Ne,"../../text/figures/Stepwise_ne.pdf",width=3.5, height=3.5)
+ggsave(plot=p_Ne,"../../Figures/Stepwise/Stepwise_ne.pdf",width=3.5, height=3.5)
 
-ggsave(plot=p_Ne_inc1,"../../text/figures/Stepwise_Ne_inclusion.pdf",width=3.5, height=3.5)
-ggsave(plot=p_Ne_inc2,"../../text/figures/Stepwise_Ne_exclusion.pdf",width=3.5, height=3.5)
+ggsave(plot=p_Ne_inc1,"../../Figures/Stepwise/Stepwise_Ne_inclusion.pdf",width=3.5, height=3.5)
+ggsave(plot=p_Ne_inc2,"../../Figures/Stepwise/Stepwise_Ne_exclusion.pdf",width=3.5, height=3.5)
 
 
 print(sprintf("coverage migration = %f ", mean(cov.m$isIn)))
