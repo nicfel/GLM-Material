@@ -69,7 +69,7 @@ for (i in seq(1,length(log),1)){
       # loop over the Ne's
       for (i in seq(2,length(Ne_params))){
           name = names(Ne_params)[i]
-          Ne.new <- data.frame(true=Ne_params[Ne_index,i], est=median(t[which(t[,name]!=0), name]), inc=length(which(t[,name]!=0))/length(t[,name]))
+          Ne.new <- data.frame(true=Ne_params[Ne_index,i], est=median(t[which(t[,name]!=0), name]), lower=quantile(t[which(t[,name]!=0), name],0.025), upper=quantile(t[which(t[,name]!=0), name],0.975), inc=length(which(t[,name]!=0))/length(t[,name]))
           if (Nenr==1){
             Ne <- Ne.new
             Nenr=Nenr+1
@@ -80,7 +80,7 @@ for (i in seq(1,length(log),1)){
       # loop over the Ne's
       for (i in seq(2,length(m_params))){
         name = names(m_params)[i]
-        m.new <- data.frame(true=m_params[m_index,i], est=median(t[which(t[,name]!=0), name]), inc=length(which(t[,name]!=0))/length(t[,name]))
+        m.new <- data.frame(true=m_params[m_index,i], est=median(t[which(t[,name]!=0), name]), lower=quantile(t[which(t[,name]!=0), name],0.025), upper=quantile(t[which(t[,name]!=0), name],0.975), inc=length(which(t[,name]!=0))/length(t[,name]))
         if (mnr==1){
           m <- m.new
           mnr=mnr+1
@@ -153,17 +153,40 @@ p_Ne_inc2 <- ggplot()+
 plot(p_Ne_inc2)
 
 
-ggsave(plot=p_mig,"../../Figures/Stepwise/Stepwise_migration.pdf",width=3.5, height=3.5)
+# ggsave(plot=p_mig,"../../Figures/Stepwise/Stepwise_migration.pdf",width=3.5, height=3.5)
+# 
+# ggsave(plot=p_mig_inc1,"../../Figures/Stepwise/Stepwise_mig_inclusion.pdf",width=3.5, height=3.5)
+# ggsave(plot=p_mig_inc2,"../../Figures/Stepwise/Stepwise_mig_exclusion.pdf",width=3.5, height=3.5)
+# 
+# 
+# ggsave(plot=p_Ne,"../../Figures/Stepwise/Stepwise_ne.pdf",width=3.5, height=3.5)
+# 
+# ggsave(plot=p_Ne_inc1,"../../Figures/Stepwise/Stepwise_Ne_inclusion.pdf",width=3.5, height=3.5)
+# ggsave(plot=p_Ne_inc2,"../../Figures/Stepwise/Stepwise_Ne_exclusion.pdf",width=3.5, height=3.5)
 
-ggsave(plot=p_mig_inc1,"../../Figures/Stepwise/Stepwise_mig_inclusion.pdf",width=3.5, height=3.5)
-ggsave(plot=p_mig_inc2,"../../Figures/Stepwise/Stepwise_mig_exclusion.pdf",width=3.5, height=3.5)
+
+# print(sprintf("coverage migration = %f ", mean(cov.m$isIn)))
+# print(sprintf("coverage Ne = %f ",mean(cov.Ne$isIn)))
 
 
-ggsave(plot=p_Ne,"../../Figures/Stepwise/Stepwise_ne.pdf",width=3.5, height=3.5)
 
-ggsave(plot=p_Ne_inc1,"../../Figures/Stepwise/Stepwise_Ne_inclusion.pdf",width=3.5, height=3.5)
-ggsave(plot=p_Ne_inc2,"../../Figures/Stepwise/Stepwise_Ne_exclusion.pdf",width=3.5, height=3.5)
+p_error <- ggplot()+
+  geom_point(data=m_red1, aes(x=true, y=est),size=0.1)+
+  geom_errorbar(data=m_red1, aes(x=true, ymin=lower, ymax=upper), alpha=0.5)+
+  geom_segment(data=m_red1, aes(x = -3.5, y = -3.5, xend = 3.5, yend = 3.5), color="red") +
+  ylab("estimated") + xlab("true")+ 
+  ggtitle("migration rates") + 
+  theme(legend.position="none")
+plot(p_error)
+ggsave(plot=p_error,"../../Figures/Stepwise/Stepwise_migration_error.pdf",width=3.5, height=3.5)
 
 
-print(sprintf("coverage migration = %f ", mean(cov.m$isIn)))
-print(sprintf("coverage Ne = %f ",mean(cov.Ne$isIn)))
+p_Ne_error <- ggplot()+
+  geom_point(data=Ne_red1, aes(x=true, y=est),size=0.1)+
+  geom_errorbar(data=Ne_red1, aes(x=true, ymin=lower, ymax=upper), alpha=0.5)+
+  geom_segment(data=Ne_red1, aes(x = -3.5, y = -3.5, xend = 3.5, yend = 3.5), color="red") +
+  ylab("estimated") + xlab("true")+ 
+  ggtitle("effective population size") + 
+  theme(legend.position="none")
+plot(p_Ne_error)
+ggsave(plot=p_Ne_error,"../../Figures/Stepwise/Stepwise_Ne_error.pdf",width=3.5, height=3.5)

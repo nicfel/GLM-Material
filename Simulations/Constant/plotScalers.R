@@ -93,14 +93,14 @@ for (i in seq(1,length(log),1)){
         # make the dta glm name
         name_dta <- gsub("migrationGLMscaler.m_co", "location.coefficientsTimesIndicators", name)
         if (i==length(m_params)-1){
-          m.new1 <- data.frame(true=m_params[m_index,i], est=median(t[which(t[,name]!=0), name]), inc=length(which(t[,name]!=0))/length(t[,name]), method="MASCOT", sampling="from")
-          m.new2 <- data.frame(true=m_params[m_index,i], est=median(t_dta[which(t_dta[,name_dta]!=0), name_dta]), inc=length(which(t_dta[,name_dta]!=0))/length(t_dta[,name_dta]), method="DTA", sampling="from")
+          m.new1 <- data.frame(true=m_params[m_index,i], est=median(t[which(t[,name]!=0), name]), lower=quantile(t[which(t[,name]!=0), name],0.025), upper=quantile(t[which(t[,name]!=0), name],0.975), inc=length(which(t[,name]!=0))/length(t[,name]), method="MASCOT", sampling="from")
+          m.new2 <- data.frame(true=m_params[m_index,i], est=median(t_dta[which(t_dta[,name_dta]!=0), name_dta]), lower=quantile(t_dta[which(t_dta[,name_dta]!=0), name_dta],0.025), upper=quantile(t_dta[which(t_dta[,name_dta]!=0), name_dta],0.975), inc=length(which(t_dta[,name_dta]!=0))/length(t_dta[,name_dta]), method="DTA", sampling="from")
         }else if(i==length(m_params)){
-          m.new1 <- data.frame(true=m_params[m_index,i], est=median(t[which(t[,name]!=0), name]), inc=length(which(t[,name]!=0))/length(t[,name]), method="MASCOT", sampling="to")
-          m.new2 <- data.frame(true=m_params[m_index,i], est=median(t_dta[which(t_dta[,name_dta]!=0), name_dta]), inc=length(which(t_dta[,name_dta]!=0))/length(t_dta[,name_dta]), method="DTA", sampling="to")
+          m.new1 <- data.frame(true=m_params[m_index,i], est=median(t[which(t[,name]!=0), name]), lower=quantile(t[which(t[,name]!=0), name],0.025), upper=quantile(t[which(t[,name]!=0), name],0.975), inc=length(which(t[,name]!=0))/length(t[,name]), method="MASCOT", sampling="to")
+          m.new2 <- data.frame(true=m_params[m_index,i], est=median(t_dta[which(t_dta[,name_dta]!=0), name_dta]), lower=quantile(t_dta[which(t_dta[,name_dta]!=0), name_dta],0.025), upper=quantile(t_dta[which(t_dta[,name_dta]!=0), name_dta],0.975), inc=length(which(t_dta[,name_dta]!=0))/length(t_dta[,name_dta]), method="DTA", sampling="to")
         }else{
-          m.new1 <- data.frame(true=m_params[m_index,i], est=median(t[which(t[,name]!=0), name]), inc=length(which(t[,name]!=0))/length(t[,name]), method="MASCOT", sampling="none")
-          m.new2 <- data.frame(true=m_params[m_index,i], est=median(t_dta[which(t_dta[,name_dta]!=0), name_dta]), inc=length(which(t_dta[,name_dta]!=0))/length(t_dta[,name_dta]), method="DTA", sampling="none")
+          m.new1 <- data.frame(true=m_params[m_index,i], est=median(t[which(t[,name]!=0), name]), lower=quantile(t[which(t[,name]!=0), name],0.025), upper=quantile(t[which(t[,name]!=0), name],0.975), inc=length(which(t[,name]!=0))/length(t[,name]), method="MASCOT", sampling="none")
+          m.new2 <- data.frame(true=m_params[m_index,i], est=median(t_dta[which(t_dta[,name_dta]!=0), name_dta]), lower=quantile(t_dta[which(t_dta[,name_dta]!=0), name_dta],0.025), upper=quantile(t_dta[which(t_dta[,name_dta]!=0), name_dta],0.975), inc=length(which(t_dta[,name_dta]!=0))/length(t_dta[,name_dta]), method="DTA", sampling="none")
         }
           
         m.new <- rbind(m.new1, m.new2)
@@ -145,15 +145,16 @@ p_mig <- ggplot()+
                                                                                breaks=c("MASCOT", "DTA")) +
   theme(legend.position="none")
 plot(p_mig)
-ggsave(plot=p_mig,"../../figures/Constant/Constant_migration.pdf",width=5.5, height=3.5)
+ggsave(plot=p_mig,"../../Figures/Constant/Constant_migration.pdf",width=5.5, height=3.5)
 
 
 p_mig_inc1 <- ggplot()+
   geom_point(data=m_red1, aes(x=abs(true), y=inc, color=method), size=1)+ ylab("inclusion probability") +
+  geom_hline(yintercept = 0.8108, color="black", linetype="dashed") + 
   xlab("absolute value of true scaler") +  facet_grid(.~method) + theme(legend.position="none")+  
   scale_color_manual(values = c("MASCOT" = col0, "DTA" = col2), breaks=c("MASCOT", "DTA"))
 plot(p_mig_inc1)
-ggsave(plot=p_mig_inc1,"../../figures/Constant/Constant_inclusion.pdf",width=5.5, height=3.5)
+ggsave(plot=p_mig_inc1,"../../Figures/Constant/Constant_inclusion.pdf",width=5.5, height=3.5)
 
 
 p_sam1 <- ggplot(data=m_sam1)+
@@ -162,7 +163,7 @@ p_sam1 <- ggplot(data=m_sam1)+
   theme(legend.position="none",axis.text.y=element_blank()) +  facet_grid(.~method) +  scale_fill_manual(values = c("MASCOT" = col0, "DTA" = col2),
                                                                                breaks=c("MASCOT", "DTA"))
 plot(p_sam1)
-ggsave(plot=p_sam1,"../../figures/Constant/Constant_sampling.pdf",width=5.5, height=3.5)
+ggsave(plot=p_sam1,"../../Figures/Constant/Constant_sampling.pdf",width=5.5, height=3.5)
 
 
 m_red2_sam = m_red2[which(m_red2$sampling=="none"),]
@@ -172,7 +173,7 @@ p_mig_inc2 <- ggplot(data=m_red2_sam)+
   ylab("density") + xlab("inclusion probability") +
   theme(legend.position="none",axis.text.y=element_blank()) +  facet_grid(.~method) +  scale_fill_manual(values = c("MASCOT" = col0, "DTA" = col2), breaks=c("MASCOT", "DTA"))
 plot(p_mig_inc2)
-ggsave(plot=p_mig_inc2,"../../figures/Constant/Constant_exclusion.pdf",width=5.5, height=3.5)
+ggsave(plot=p_mig_inc2,"../../Figures/Constant/Constant_exclusion.pdf",width=5.5, height=3.5)
 
 
 
@@ -205,7 +206,7 @@ plot(p_Ne)
 p_Ne_inc1 <- ggplot()+
   geom_point(data=Ne_red1, aes(x=abs(true), y=inc), size=1)+
   ylab("inclusion probability") + xlab("absolute value of true scaler") + ggtitle("Inclusion of active covariates") + 
-  geom_hline(yintercept = 0.6818, color="black", linetype="dashed") + 
+  geom_hline(yintercept = 0.8108, color="black", linetype="dashed") + 
   theme(legend.position="none") 
 plot(p_Ne_inc1)
 
@@ -228,5 +229,18 @@ plot(p_Ne_inc2)
 # ggsave(plot=p_Ne_inc2,"../../text/figures/Stepwise_Ne_exclusion.pdf",width=3.5, height=3.5)
 
 
-print(sprintf("coverage migration = %f ", mean(cov.m$isIn)))
-print(sprintf("coverage Ne = %f ",mean(cov.Ne$isIn)))
+# print(sprintf("coverage migration = %f ", mean(cov.m$isIn)))
+# print(sprintf("coverage Ne = %f ",mean(cov.Ne$isIn)))
+
+
+
+p_error <- ggplot()+
+  geom_point(data=m_red1, aes(x=true, y=est, color=method),size=0.1)+
+  geom_errorbar(data=m_red1, aes(x=true, ymin=lower, ymax=upper, color=method), alpha=0.5)+
+  geom_segment(data=m_red1, aes(x = -3.5, y = -3.5, xend = 3.5, yend = 3.5), color="red") +
+  ylab("estimated") + xlab("true")+  facet_grid(.~method) +  scale_color_manual(values = c("MASCOT" = col0, "DTA" = col2),
+                                                                                breaks=c("MASCOT", "DTA")) +
+  theme(legend.position="none")
+plot(p_error)
+ggsave(plot=p_error,"../../Figures/Constant/Constant_migration_error.pdf",width=5.5, height=3.5)
+
