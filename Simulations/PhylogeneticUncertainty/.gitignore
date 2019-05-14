@@ -1,0 +1,10 @@
+/master/
+/out/
+/xmls/
+/Sequences/
+/treeinference/
+/treeinfout/
+/treeinfout_old/
+/covariates/
+mCovariates.txt
+NeCovariates.txt

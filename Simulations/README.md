@@ -2,7 +2,7 @@
 Folder contains the materials to recreate the material of the simulation part of the results section
 
 ## Constant
-Material for the comparison between DTA-GLM and MASCOT-GLM based on time invariant predictors (Figure 2)
+Material for the comparison between DTA-GLM and MASCOT-GLM based on time invariant predictors (Figure 2).
 
-## Stepwise
-Material for the testing of the performance of the MASCOT-GLM model (Figure 1)
+## PhylogeneticUncertainty
+Material for the testing of the performance of the MASCOT-GLM model and comparing the inference when inferring and when fixing the phylogenetic tree (Figure 1).

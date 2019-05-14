@@ -1,0 +1,26 @@
+<beast version='2.0' namespace='master:master.model:master.steppers:master.conditions:master.postprocessors:master.outputs'>
+    <run spec='InheritanceTrajectory'
+        verbosity='2'>
+        
+        <model spec='Model'>
+            <populationType spec='PopulationType' typeName='L' id='L' dim="insert_dimension"/>
+            
+            <reactionGroup spec='ReactionGroup' reactionGroupName='Coalescence'>
+                insert_coalescent
+           </reactionGroup>
+            
+            <reactionGroup spec='ReactionGroup' reactionGroupName='Migration'>
+                insert_migration
+           </reactionGroup>
+            
+        </model>
+        
+        <initialState spec='InitState'>
+            insert_samples
+        </initialState>
+        
+        <lineageEndCondition spec='LineageEndCondition' nLineages="1"/>
+        
+        <output spec='NexusOutput' fileName='insert_filename.tree' collapseSingleChildNodes="true" reverseTime="true"/>
+    </run>
+</beast>
