@@ -7,6 +7,6 @@ To run the xmls, both the CoupledMCMC and the Mascot package have to be installe
 
 `getConvergence.R` analyses the convergence of the 3 different runs using ESS values and scale reduction factors. The ESS values estimates by coda in this script can differ from the ESS values in tracer.
 
-`getConvergence.R` plots the predictors.
+`getPredictors.R` plots the predictors.
 
 `plotPrior.R` plots the prior and posterios on the sum of active predictors.
