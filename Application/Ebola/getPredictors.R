@@ -58,7 +58,9 @@ dat = data.frame(x=c("time to settlement with 100k",
                      "cases happend 9 weeks earlier",
                      "cases happend 6 weeks earlier",
                      "cases happend 3 weeks earlier",
+                     "cases happend 1 week earlier",
                      "unshifted case data",
+                     "cases happend 1 week later",
                      "cases happend 3 weeks later",
                      "cases happend 6 weeks later",
                      "cases happend 9 weeks later"), y=c(
@@ -74,7 +76,9 @@ dat = data.frame(x=c("time to settlement with 100k",
                                       length(which(ne.predictors[,"incidence9weekearlier"]!=0))/length(ne.predictors$Sample),
                                       length(which(ne.predictors[,"incidence6weekearlier"]!=0))/length(ne.predictors$Sample),
                                       length(which(ne.predictors[,"incidence3weekearlier"]!=0))/length(ne.predictors$Sample),
+                                      length(which(ne.predictors[,"incidence1weekearlier"]!=0))/length(ne.predictors$Sample),
                                       length(which(ne.predictors[,"incidence"]!=0))/length(ne.predictors$Sample),
+                                      length(which(ne.predictors[,"incidence1weeklater"]!=0))/length(ne.predictors$Sample),
                                       length(which(ne.predictors[,"incidence3weeklater"]!=0))/length(ne.predictors$Sample),
                                       length(which(ne.predictors[,"incidence6weeklater"]!=0))/length(ne.predictors$Sample),
                                       length(which(ne.predictors[,"incidence9weeklater"]!=0))/length(ne.predictors$Sample)),
@@ -90,7 +94,9 @@ dat = data.frame(x=c("time to settlement with 100k",
                    median(ne.predictors[which(ne.predictors[,"incidence9weekearlier"]!=0),"incidence9weekearlier"])>0,
                    median(ne.predictors[which(ne.predictors[,"incidence6weekearlier"]!=0),"incidence6weekearlier"])>0,
                    median(ne.predictors[which(ne.predictors[,"incidence3weekearlier"]!=0),"incidence3weekearlier"])>0,
+                   median(ne.predictors[which(ne.predictors[,"incidence1weekearlier"]!=0),"incidence1weekearlier"])>0,
                    median(ne.predictors[which(ne.predictors[,"incidence"]!=0),"incidence"])>0,
+                   median(ne.predictors[which(ne.predictors[,"incidence1weeklater"]!=0),"incidence1weeklater"])>0,
                    median(ne.predictors[which(ne.predictors[,"incidence3weeklater"]!=0),"incidence3weeklater"])>0,
                    median(ne.predictors[which(ne.predictors[,"incidence6weeklater"]!=0),"incidence6weeklater"])>0,
                    median(ne.predictors[which(ne.predictors[,"incidence9weeklater"]!=0),"incidence9weeklater"])>0) )
@@ -113,7 +119,9 @@ p_ne <- ggplot(dat) + geom_bar(aes(x=x,y=y, fill=direction), stat="identity", co
                               "cases happend 9 weeks earlier",
                               "cases happend 6 weeks earlier",
                               "cases happend 3 weeks earlier",
+                              "cases happend 1 week earlier",
                               "unshifted case data",
+                              "cases happend 1 week later",
                               "cases happend 3 weeks later",
                               "cases happend 6 weeks later",
                               "cases happend 9 weeks later")) + coord_flip()
@@ -346,4 +354,4 @@ hlay <- rbind(c(1,1,1,1,2,2,2,2,2))
   
   
 p_all <- grid.arrange(p_ne, p_mig, layout_matrix=hlay)
-ggsave(plot= p_all ,paste("Ebola_predictors.pdf", sep=""),width=8, height=8)
+ggsave(plot= p_all ,paste("../../Figures/Ebola/Ebola_predictors.pdf", sep=""),width=8, height=8)

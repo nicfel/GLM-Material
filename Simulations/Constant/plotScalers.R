@@ -35,7 +35,7 @@ Ne_params <- read.table("NeParameters.txt", header=TRUE, sep="\t", nrows = 0)
 
 Nenr <- 1
 mnr <- 1
-
+nr_excluded = 0
 # Read In Data ---------------------------------
 for (i in seq(1,length(log),1)){
   print(i)
@@ -48,21 +48,26 @@ for (i in seq(1,length(log),1)){
   
   # Read in the MASCOT *.logs
   t <- read.table(filename1, header=TRUE, sep="\t")
-  t <- t[-seq(1,ceiling(length(t$m1)/10)), ]
+  t <- t[-seq(1,ceiling(length(t$posterior)/5)), ]
   
   # Read in the DTA *.logs
   t_dta <- read.table(fname, header=TRUE, sep="\t")
-  t_dta <- t_dta[-seq(1,ceiling(length(t_dta$state)/10)), ]
+  t_dta <- t_dta[-seq(1,ceiling(length(t_dta$posterior)/5)), ]
   
   # calculate ess values
   ess <- effectiveSize(t)
   ess_dta <- effectiveSize(t_dta)
+  
+  # set all ess values of lower than 1 (parameter not inferred or always excluded) to high
+  ess[ess<1] = 10000;
+  ess_dta[ess_dta<1] = 10000;
+  
 
-    
-  if (min(ess[2:3])<100 || min(ess_dta[2:3])<100){
+  if (min(ess[2:length(ess)])<50 || min(ess_dta[2:52])<50){
+    nr_excluded = nr_excluded+1
     print("masco ESS value to low")
-    print(sprintf("ESS value is %f for file %s",min(ess[2:3]),filename1))
-    print(sprintf("ESS value is %f for file %s",min(ess_dta[2:3]),fname))
+    print(sprintf("ESS value is %f for file %s", min(ess[2:length(ess)]),filename1))
+    print(sprintf("ESS value is %f for file %s", min(ess_dta[2:52]),fname))
   }else{
       dfname <- data.frame(filename = filename1)
       
@@ -114,6 +119,7 @@ for (i in seq(1,length(log),1)){
   }
 }
 
+print(paste("nr excluded based on ess cutoff ", nr_excluded, "of", length(log)))
 
 #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

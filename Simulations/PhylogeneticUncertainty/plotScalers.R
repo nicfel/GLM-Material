@@ -39,6 +39,8 @@ mnr <- 1
 first = TRUE
 firstCI = TRUE
 
+nr_excluded = 0
+
 # Read In Data ---------------------------------
 for (i in seq(1,length(log),1)){
   print(i)
@@ -48,21 +50,24 @@ for (i in seq(1,length(log),1)){
   
   # Read in the log files of the runs with fixed trees
   t <- read.table(filename1, header=TRUE, sep="\t")
-  t <- t[-seq(1,ceiling(length(t$m1)/10)), ]
+  t <- t[-seq(1,ceiling(length(t$posterior)/10)), ]
   # Read in the log files of the runs w/o fixed trees
   t.phylo <- read.table(gsub("/out", "/treeinfout", filename1), header=TRUE, sep="\t")
-  t.phylo <- t.phylo[-seq(1,ceiling(length(t.phylo$m1)/10)), ]
+  t.phylo <- t.phylo[-seq(1,ceiling(length(t.phylo$posterior)/10)), ]
   
   
   # calculate ess values
   ess <- effectiveSize(t)
   ess.phylo <- effectiveSize(t.phylo)
   
+  # set all ess values of lower than 1 (parameter not inferred, such as the sample number, or always excluded, such as some predictors) to much higher values
+  ess[ess<1] = 10000;
+  ess.phylo[ess.phylo<1] = 10000;
   
-  
-  if (min(ess[2:3])<100 || min(ess.phylo[2:3])<100){
-    print("masco ESS value to low")
-    print(sprintf("ESS value is %f for file %s",min(ess.phylo[2:3]),filename1))
+  if (min(ess[c(2:length(ess))])<50 || min(ess.phylo[2:length(ess)])<50){
+    nr_excluded = nr_excluded+1
+    print(sprintf("ESS value is %f for file %s",min(ess[2:length(ess)]),filename1))
+    print(sprintf("ESS value is %f for file %s",min(ess.phylo[2:length(ess)]),filename1))
   }else{
     dfname <- data.frame(filename = filename1)
     
@@ -211,6 +216,8 @@ for (i in seq(1,length(log),1)){
   }
 }
 
+print(paste("excluded by ess cutoff ", nr_excluded, "of",length(log) ))
+
 sumactive_tmp = sumactive[which(sumactive$confidence_val<0.25),]
 
 p_conf <- ggplot(data = sumactive)+
@@ -224,16 +231,12 @@ p_conf <- ggplot(data = sumactive)+
 
 plot(p_conf)
 
-
 ggsave(plot=p_conf,"../../Figures/Phylo/Phylo_sumactive.pdf",width=7, height=3.5)
-
-
 #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 # plot the rate ratios
 #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
 
 m_red1 = m[which(m$true!=0),]
 m_red2 = m[which(m$true==0),]

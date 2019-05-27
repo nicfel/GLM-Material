@@ -347,7 +347,7 @@ for i = 1 : length(tree_files)
 %         fprintf(f, '\t\t</randomWalkOperator>\n');
         fprintf(f, '\t\t</operators>\n');
         fprintf(f, '\n');        
-        fprintf(f, '\t<mcmc id="mcmc" chainLength="2000000" autoOptimize="true">\n');
+        fprintf(f, '\t<mcmc id="mcmc" chainLength="10000000" autoOptimize="true">\n');
         fprintf(f, '\t\t<posterior id="posterior">\n');
         fprintf(f, '\t\t\t<prior id="prior">\n');
         fprintf(f, '\t\t\t\t<exponentialPrior mean="1.0">\n');

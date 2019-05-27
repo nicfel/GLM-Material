@@ -45,7 +45,7 @@ for (i in seq(1,length(log),1)){
   
   # Read in the SISCO *.logs
   t <- read.table(filename1, header=TRUE, sep="\t")
-  t <- t[-seq(1,ceiling(length(t$m1)/10)), ]
+  t <- t[-seq(1,ceiling(length(t$posterior)/10)), ]
 
   # calculate ess values
   ess <- effectiveSize(t)
