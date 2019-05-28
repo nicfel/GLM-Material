@@ -221,11 +221,13 @@ print(paste("excluded by ess cutoff ", nr_excluded, "of",length(log) ))
 sumactive_tmp = sumactive[which(sumactive$confidence_val<0.25),]
 
 p_conf <- ggplot(data = sumactive)+
-  geom_smooth(aes(x=intsize.mig,y=inint.mig, color="sum active migration predictors fixed tree"), method="lm", formula=y~x)+
-  geom_smooth(aes(x=intsize.mig.phylo,y=inint.mig.phylo, color="sum active migration predictors inferred tree"), method="lm", formula=y~x)+
-  geom_smooth(aes(x=intsize.ne,y=inint.ne, color="sum active Ne predictors fixed tree"), method="lm", formula=y~x)+
-  geom_smooth(aes(x=intsize.ne.phylo,y=inint.ne.phylo, color="sum active Ne predictors inferred tree"), method="lm", formula=y~x) +
+  geom_smooth(aes(x=intsize.mig*100,y=inint.mig*100, color="sum active migration predictors fixed tree"), method="lm", formula=y~x)+
+  geom_smooth(aes(x=intsize.mig.phylo*100,y=inint.mig.phylo*100, color="sum active migration predictors inferred tree"), method="lm", formula=y~x)+
+  geom_smooth(aes(x=intsize.ne*100,y=inint.ne*100, color="sum active Ne predictors fixed tree"), method="lm", formula=y~x)+
+  geom_smooth(aes(x=intsize.ne.phylo*100,y=inint.ne.phylo*100, color="sum active Ne predictors inferred tree"), method="lm", formula=y~x) +
   xlab("HPD interval size") +
+  scale_x_continuous(limits=c(0,100),breaks=c(0,25,50,75,100)) +
+  scale_y_continuous(limits=c(0,100),breaks=c(0,25,50,75,100)) +
   ylab("coverage") +
   theme_minimal()
 
